@@ -1,0 +1,25 @@
+[package]
+name = "animalese-rs"
+version = "0.1.0"
+edition = "2024"
+description = "Animal Crossing sounds while you type - a lightweight Rust port of Animalese Typing"
+license = "MIT"
+repository = "https://github.com/abbysimple/RUST-animalese-typing-desktop"
+
+[dependencies]
+cpal = "0.18.2"
+eframe = { version = "0.36.2", default-features = false, features = ["glow", "default_fonts"] }
+fastrand = "2.5.0"
+lewton = "0.10.2"
+png = "0.18.1"
+resvg = { version = "0.48.1", default-features = false }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+tray-icon = "0.26.1"
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_UI_Input_KeyboardAndMouse", "Win32_UI_Accessibility", "Win32_System_Threading", "Win32_System_LibraryLoader", "Win32_Security", "Win32_UI_HiDpi"] }
+winreg = "0.56.0"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

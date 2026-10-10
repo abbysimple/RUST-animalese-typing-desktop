@@ -1,0 +1,14 @@
+<!--
+author: joshxvii
+ -->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64", viewBox="0 0 64 64">
+  <g>
+    <path d="M41.068 10.658c8.775.51 7.74 9.093 10.504 16.34 3.264 5 7.522 1.685 7.522 1.685-.76 4.97-3.127 8.471-6.854 8.284-3.727-.187-13.308-5.68-13.308-5.68l-6.93-14.016s1.631-6.613 9.066-6.613z" style="fill:var(--alt2-color);stroke:var(--alt2-color);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"/>
+    <circle cx="31.999" cy="30.452" r="15.621" style="fill:var(--alt1-color);fill-opacity:1;stroke-linecap:round;stroke-linejoin:round"/>
+    <path d="M47.494 39.746a15.493 8.427 0 0 1-7.747 7.298 15.493 8.427 0 0 1-15.493 0 15.493 8.427 0 0 1-7.747-7.298" style="fill:var(--alt1-color);fill-opacity:1;stroke-width:1.01386;stroke-linecap:round;stroke-linejoin:round"/>
+    <path d="M5.631 25.981c-1.716 1.004-2.5 2.994-1.267 5.663 1.204 2.459 4.525 2.51 6.89 2.932 1.957.35 1.26-4.848.101-6.828-1.159-1.98-4.008-2.771-5.724-1.767zm36.741 0c1.716 1.004 2.5 2.994 1.268 5.663-1.204 2.459-4.526 2.51-6.89 2.932-1.957.35-1.26-4.848-.101-6.828 1.158-1.98 4.008-2.771 5.723-1.767z" style="fill:var(--alt1-color);fill-opacity:1;stroke-linecap:round;stroke-linejoin:round" transform="translate(7.999 6.452)"/>
+    <path d="M19.97 27.038c0 1.254-1.044 2.27-2.334 2.27-1.289 0-2.334-1.016-2.334-2.27 0-1.253 1.045-2.27 2.334-2.27 1.29 0 2.335 1.017 2.335 2.27zm8.063 0c0 1.254 1.045 2.27 2.334 2.27 1.29 0 2.334-1.016 2.334-2.27 0-1.253-1.045-2.27-2.334-2.27-1.289 0-2.334 1.017-2.334 2.27z" style="fill:var(--alt2-color);fill-opacity:1;stroke-linecap:round;stroke-linejoin:round" transform="translate(7.999 6.452)"/>
+    <path d="m24 8.379.002 11.993-6.113.103c0-4.798.372-6.122.372-6.122s-1.88 2.267-2.659 6.546l-5.754.403-.179 4.89-2.122-.526S6.62 8.38 24 8.38zm.004 0-.002 11.993 6.113.103c0-4.798-.372-6.122-.372-6.122s1.88 2.267 2.659 6.546l5.754.403.179 4.89 2.121-.526S41.384 8.38 24.004 8.38z" style="fill:var(--alt2-color);fill-opacity:1;stroke-width:1.09415;stroke-linecap:round;stroke-linejoin:round" transform="translate(7.999 6.452)"/>
+    <path d="M35.856 39.319A3.991 3.732 0 0 1 32 42.085a3.991 3.732 0 0 1-3.855-2.766" style="fill:none;fill-opacity:1;stroke:var(--alt2-color);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"/>
+  </g>
+</svg>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <g
+     id="layer1">
+    <path
+       style="fill:var(--alt1-color);stroke:var(--alt1-color);fill-opacity:1;stroke-width:2;stroke-linejoin:round;paint-order:normal"
+       d="M 14,26 27,12 24,8 14,21 8,14 4,19 Z"
+       id="path2" />
+  </g>
+</svg>

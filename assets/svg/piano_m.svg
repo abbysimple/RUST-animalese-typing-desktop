@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<!--
+author: joshxvii
+ -->
+
+<svg
+   width="48mm"
+   height="144mm"
+   viewBox="0 0 48 144"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2">
+      <rect
+         style="fill-opacity:1;stroke-width:1;stroke-linecap:round;stroke-linejoin:round"
+         id="rect1"
+         width="47.998669"
+         height="42.396782"
+         x="-3.3378601e-06"
+         y="-6.2584877e-07"
+         ry="15.484062" />
+    </clipPath>
+
+  </defs>
+  <g
+     id="layer1"
+     style="display:inline">
+    <path
+       d="M 16.000057,5.2916667 V 82.777893 c 0,7.324897 -5.897035,13.221932 -13.221932,13.221932 H 0 V 128.51619 C 0,137.09436 6.9056399,144 15.483809,144 h 17.032036 c 8.57817,0 15.484326,-6.90564 15.484326,-15.48381 V 95.999825 h -2.778642 c -7.324897,0 -13.221415,-5.897035 -13.221415,-13.221932 V 5.2916667 Z"
+       style="display:inline;fill:#7b8991;stroke-linecap:round;stroke-linejoin:round;fill-opacity:1"
+       id="path6" />
+    <path class="button-top"
+       d="m 16.000057,0 v 82.777893 c 0,7.324897 -5.897035,13.221932 -13.221932,13.221932 H 0 v 20.516065 c 0,8.57817 6.9056403,15.4838 15.483809,15.4838 h 17.032036 c 8.57817,0 15.484326,-6.90563 15.484326,-15.4838 V 95.999825 h -3.250448 c -7.063293,0 -12.749609,-5.686316 -12.749609,-12.749609 V 0.74982503 c 0,-0.25318049 0.02279,-0.50038132 0.03721,-0.74982503 z"
+       style="display:inline;stroke-linecap:round;stroke-linejoin:round"
+       id="path5" />
+  </g>
+</svg>
