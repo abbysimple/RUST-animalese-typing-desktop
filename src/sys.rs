@@ -172,17 +172,33 @@ pub fn running_apps() -> Vec<String> {
 const RUN_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Run";
 const RUN_VALUE: &str = "AnimaleseTypingRs";
 
+fn autostart_command() -> Option<String> {
+    std::env::current_exe().ok().map(|exe| format!("\"{}\"", exe.display()))
+}
+
+/// True when the Run entry exists and launches this exe.
+pub fn autostart_is_current() -> bool {
+    use winreg::RegKey;
+    use winreg::enums::*;
+    let current: Option<String> =
+        RegKey::predef(HKEY_CURRENT_USER).open_subkey(RUN_KEY).and_then(|k| k.get_value(RUN_VALUE)).ok();
+    current.is_some_and(|c| Some(c.to_lowercase()) == autostart_command().map(|s| s.to_lowercase()))
+}
+
 pub fn set_autostart(enable: bool) {
     use winreg::RegKey;
     use winreg::enums::*;
-    let Ok(key) = RegKey::predef(HKEY_CURRENT_USER).open_subkey_with_flags(RUN_KEY, KEY_SET_VALUE) else {
-        return;
-    };
-    if enable {
-        if let Ok(exe) = std::env::current_exe() {
-            let _ = key.set_value(RUN_VALUE, &format!("\"{}\"", exe.display()));
+    let result = RegKey::predef(HKEY_CURRENT_USER).open_subkey_with_flags(RUN_KEY, KEY_SET_VALUE).and_then(|key| {
+        if !enable {
+            return match key.delete_value(RUN_VALUE) {
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
+                other => other,
+            };
         }
-    } else {
-        let _ = key.delete_value(RUN_VALUE);
+        let cmd = autostart_command().ok_or_else(|| std::io::Error::other("current_exe unavailable"))?;
+        key.set_value(RUN_VALUE, &cmd)
+    });
+    if let Err(e) = result {
+        log(&format!("set_autostart({enable}) failed: {e}"));
     }
 }

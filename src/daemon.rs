@@ -23,6 +23,9 @@ const WM_APP_KEY: u32 = WM_APP + 2;
 const WM_APP_FOCUS: u32 = WM_APP + 3;
 const WM_APP_MENU: u32 = WM_APP + 4;
 const TIMER_AUDIO: usize = 1;
+/// Checks that the tray icon really got added (logins can race Explorer).
+const TIMER_TRAY: usize = 2;
+const TRAY_CHECKS: u32 = 40; // every 3 s for the first 2 minutes
 
 const MENU_MUTE: usize = 1;
 const MENU_SETTINGS: usize = 2;
@@ -45,6 +48,7 @@ struct Daemon {
     tray: TrayIcon,
     mute_item: CheckMenuItem,
     startup_item: CheckMenuItem,
+    tray_checks: u32,
 }
 
 thread_local! {
@@ -70,6 +74,10 @@ impl Daemon {
     fn apply_config(&mut self, cfg: Config) {
         self.hotkey = cfg.disable_hotkey.as_deref().and_then(Hotkey::parse);
         self.player.prepare(&cfg);
+        // Self-heal the Run entry if it's missing or points at another copy of the exe.
+        if cfg.startup_run && !sys::autostart_is_current() {
+            sys::set_autostart(true);
+        }
         self.startup_item.set_checked(cfg.startup_run);
         self.cfg = cfg;
         self.update_filter(unsafe { GetForegroundWindow() });
@@ -140,6 +148,22 @@ impl Daemon {
         }
     }
 
+    /// Re-adds the tray icon if Explorer didn't take it, by replaying the
+    /// "TaskbarCreated" broadcast that tray-icon already re-registers on.
+    fn check_tray(&mut self, hwnd: HWND) {
+        self.tray_checks += 1;
+        if self.tray.rect().is_none() {
+            let msg = unsafe { RegisterWindowMessageW(wide("TaskbarCreated").as_ptr()) };
+            unsafe { SendMessageW(self.tray.window_handle(), msg, 0, 0) };
+            if self.tray.rect().is_none() {
+                sys::log(&format!("tray icon not added yet (check {})", self.tray_checks));
+            }
+        }
+        if self.tray_checks >= TRAY_CHECKS {
+            unsafe { KillTimer(hwnd, TIMER_TRAY) };
+        }
+    }
+
     fn on_menu(&mut self, id: usize) {
         match id {
             MENU_MUTE => self.toggle_muted(),
@@ -200,6 +224,7 @@ unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) 
             with_daemon(|d| muted = d.muted as LRESULT);
             return muted;
         }
+        WM_TIMER if wp == TIMER_TRAY => with_daemon(|d| d.check_tray(hwnd)),
         WM_TIMER if wp == TIMER_AUDIO => with_daemon(|d| {
             d.player.engine.tick();
             if !d.player.engine.is_running() {
@@ -217,9 +242,6 @@ fn post_menu(id: usize) {
 
 pub fn run() {
     let cfg = Config::load();
-    if cfg.startup_run {
-        sys::set_autostart(true); // keep the registry path current if the exe moved
-    }
 
     unsafe {
         let hinst = GetModuleHandleW(std::ptr::null());
@@ -272,6 +294,7 @@ pub fn run() {
             .with_icon(icon(assets::ICON).expect("tray icon"))
             .build()
         else {
+            sys::log("creating the tray icon failed");
             return;
         };
 
@@ -287,8 +310,10 @@ pub fn run() {
             tray,
             mute_item,
             startup_item,
+            tray_checks: 0,
         };
         d.apply_config(cfg);
+        SetTimer(hwnd, TIMER_TRAY, 3000, None);
         DAEMON.with(|s| *s.borrow_mut() = Some(d));
 
         let kb = SetWindowsHookExW(WH_KEYBOARD_LL, Some(keyboard_hook), hinst, 0);

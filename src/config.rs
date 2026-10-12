@@ -130,8 +130,8 @@ impl Config {
         }
         let Ok(json) = serde_json::to_string_pretty(self) else { return };
         let tmp = p.with_extension("json.tmp");
-        if std::fs::write(&tmp, json).is_ok() {
-            let _ = std::fs::rename(&tmp, &p);
+        if let Err(e) = std::fs::write(&tmp, json).and_then(|_| std::fs::rename(&tmp, &p)) {
+            crate::sys::log(&format!("saving {} failed: {e}", p.display()));
         }
     }
 }
