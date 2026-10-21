@@ -169,34 +169,63 @@ pub fn running_apps() -> Vec<String> {
     list
 }
 
+// Run on startup uses a shortcut in the user's Startup folder. Earlier versions used the
+// HKCU Run key, but Explorer was seen silently skipping that entry at sign-in on some PCs
+// while Startup-folder shortcuts kept working, so the old Run value is removed on sight.
 const RUN_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Run";
 const RUN_VALUE: &str = "AnimaleseTypingRs";
 
-fn autostart_command() -> Option<String> {
-    std::env::current_exe().ok().map(|exe| format!("\"{}\"", exe.display()))
+fn startup_shortcut() -> std::path::PathBuf {
+    crate::config::path()
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|appdata| appdata.join(r"Microsoft\Windows\Start Menu\Programs\Startup\Animalese Typing (Rust).lnk"))
+        .unwrap_or_default()
 }
 
-/// True when the Run entry exists and launches this exe.
-pub fn autostart_is_current() -> bool {
+fn remove_run_value() -> std::io::Result<()> {
     use winreg::RegKey;
     use winreg::enums::*;
-    let current: Option<String> =
-        RegKey::predef(HKEY_CURRENT_USER).open_subkey(RUN_KEY).and_then(|k| k.get_value(RUN_VALUE)).ok();
-    current.is_some_and(|c| Some(c.to_lowercase()) == autostart_command().map(|s| s.to_lowercase()))
+    let key = RegKey::predef(HKEY_CURRENT_USER).open_subkey_with_flags(RUN_KEY, KEY_SET_VALUE)?;
+    match key.delete_value(RUN_VALUE) {
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        other => other,
+    }
+}
+
+fn has_run_value() -> bool {
+    use winreg::RegKey;
+    use winreg::enums::*;
+    RegKey::predef(HKEY_CURRENT_USER)
+        .open_subkey(RUN_KEY)
+        .and_then(|k| k.get_value::<String, _>(RUN_VALUE))
+        .is_ok()
+}
+
+/// True when the Startup shortcut exists, launches this exe, and no old Run value is left.
+pub fn autostart_is_current() -> bool {
+    let Ok(exe) = std::env::current_exe() else { return false };
+    let Ok(bytes) = std::fs::read(startup_shortcut()) else { return false };
+    let path = exe.to_string_lossy().to_string();
+    let wide: Vec<u8> = path.encode_utf16().flat_map(u16::to_le_bytes).collect();
+    let contains = |needle: &[u8]| bytes.windows(needle.len()).any(|w| w.eq_ignore_ascii_case(needle));
+    !has_run_value() && (contains(path.as_bytes()) || contains(&wide))
 }
 
 pub fn set_autostart(enable: bool) {
-    use winreg::RegKey;
-    use winreg::enums::*;
-    let result = RegKey::predef(HKEY_CURRENT_USER).open_subkey_with_flags(RUN_KEY, KEY_SET_VALUE).and_then(|key| {
+    let lnk = startup_shortcut();
+    let result = remove_run_value().and_then(|_| {
         if !enable {
-            return match key.delete_value(RUN_VALUE) {
+            return match std::fs::remove_file(&lnk) {
                 Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
                 other => other,
             };
         }
-        let cmd = autostart_command().ok_or_else(|| std::io::Error::other("current_exe unavailable"))?;
-        key.set_value(RUN_VALUE, &cmd)
+        let exe = std::env::current_exe()?;
+        let mut link = mslnk::ShellLink::new(&exe).map_err(|e| std::io::Error::other(format!("{e:?}")))?;
+        link.set_working_dir(exe.parent().map(|d| d.to_string_lossy().into_owned()));
+        link.set_name(Some("Animal Crossing sounds while you type".into()));
+        link.create_lnk(&lnk).map_err(|e| std::io::Error::other(format!("{e:?}")))
     });
     if let Err(e) = result {
         log(&format!("set_autostart({enable}) failed: {e}"));

@@ -11,6 +11,7 @@ cpal = "0.18.2"
 eframe = { version = "0.36.2", default-features = false, features = ["glow", "default_fonts"] }
 fastrand = "2.5.0"
 lewton = "0.10.2"
+mslnk = "0.1.8"
 png = "0.18.1"
 resvg = { version = "0.48.1", default-features = false }
 serde = { version = "1.0.229", features = ["derive"] }
