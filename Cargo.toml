@@ -1,6 +1,6 @@
 [package]
 name = "animalese-rs"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "Animal Crossing sounds while you type - a lightweight Rust port of Animalese Typing"
 license = "MIT"
