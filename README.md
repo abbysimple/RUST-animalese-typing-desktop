@@ -1,7 +1,7 @@
 # RUST Animalese Typing Desktop
 
-**Animal Crossing voices and sounds every time you type**, now as a tiny native Windows app
-written in Rust.
+**Animal Crossing voices and sounds every time you type**, now as a tiny native app for
+Windows and macOS, written in Rust.
 
 This is a Rust port of [Animalese Typing Desktop](https://github.com/joshxviii/animalese-typing-desktop)
 by [joshxviii](https://github.com/joshxviii). It has the same sounds, voices, layouts and look,
@@ -66,7 +66,7 @@ Everything from the original desktop app:
 |---|---|
 | ![Settings](docs/screenshots/settings.png) | ![Key bindings](docs/screenshots/bindings.png) |
 
-## Download
+## Download (Windows)
 
 Grab `animalese-rs.exe` from the [Releases](https://github.com/abbysimple/RUST-animalese-typing-desktop/releases)
 page, put it in any folder, and run it. It appears in the tray:
@@ -75,8 +75,8 @@ page, put it in any folder, and run it. It appears in the tray:
 - **Right-click** for Disable / Editor / Run on startup / Quit.
 - Launching the exe again also opens the editor.
 
-Windows only (10/11, x64). Windows SmartScreen may warn about an unsigned app the first time;
-choose *More info → Run anyway*.
+Windows 10/11, x64. Windows SmartScreen may warn about an unsigned app the first time;
+choose *More info → Run anyway*. On a Mac, see [macOS](#macos) below.
 
 ## Build from source
 
@@ -99,8 +99,10 @@ Build the app bundle (needs Rust and the Xcode command line tools):
 ./macos/bundle.sh universal  # Apple Silicon + Intel in one app
 ```
 
-This creates `target/release/Animalese Typing.app`. Drag it to `/Applications` and open it. It
-lives in the menu bar (no Dock icon):
+This creates `target/release/Animalese Typing.app`. Drag it to `/Applications` and open it. The
+app isn't notarized, so the first time macOS may refuse to open it: right-click it and choose
+*Open*, or allow it under System Settings → Privacy & Security. It lives in the menu bar
+(no Dock icon):
 
 - The first launch asks for **Input Monitoring** (System Settings → Privacy & Security → Input
   Monitoring). Turn on *Animalese Typing*. If sounds do not start, quit it from the menu and reopen it.
