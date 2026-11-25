@@ -89,6 +89,11 @@ pub fn work_area_corner() -> Option<(f32, f32)> {
     Some((r.right as f32 / scale, r.bottom as f32 / scale))
 }
 
+/// Top-left position for the anchored editor: just above the tray in the bottom-right corner.
+pub fn anchor_position(w: f32, h: f32) -> Option<(f32, f32)> {
+    work_area_corner().map(|(x, y)| (x - w - 10.0, y - h - 10.0))
+}
+
 /// Brings an existing settings window to the front. Returns false if none is open.
 pub fn focus_settings() -> bool {
     let title = wide(SETTINGS_TITLE);

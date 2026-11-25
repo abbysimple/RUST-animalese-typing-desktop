@@ -100,8 +100,17 @@ impl Default for Config {
     }
 }
 
+#[cfg(windows)]
 fn appdata() -> PathBuf {
     std::env::var_os("APPDATA").map(PathBuf::from).unwrap_or_else(|| PathBuf::from("."))
+}
+
+/// `~/Library/Application Support`, where Electron (and so the original app) keeps its config too.
+#[cfg(target_os = "macos")]
+fn appdata() -> PathBuf {
+    std::env::var_os("HOME")
+        .map(|h| PathBuf::from(h).join("Library").join("Application Support"))
+        .unwrap_or_else(|| PathBuf::from("."))
 }
 
 pub fn path() -> PathBuf {

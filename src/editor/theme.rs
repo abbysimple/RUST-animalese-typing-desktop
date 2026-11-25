@@ -143,26 +143,43 @@ pub struct Cjk {
     pub chinese: bool,
 }
 
+#[cfg(windows)]
+const ROUNDED: &str = r"C:\Windows\Fonts\ARLRDBD.TTF";
+#[cfg(windows)]
+const KOREAN: &[&str] = &[r"C:\Windows\Fonts\malgunbd.ttf", r"C:\Windows\Fonts\malgun.ttf"];
+#[cfg(windows)]
+const JAPANESE: &[&str] = &[r"C:\Windows\Fonts\YuGothB.ttc", r"C:\Windows\Fonts\meiryob.ttc", r"C:\Windows\Fonts\msgothic.ttc"];
+#[cfg(windows)]
+const CHINESE: &[&str] = &[r"C:\Windows\Fonts\msyhbd.ttc", r"C:\Windows\Fonts\msyh.ttc", r"C:\Windows\Fonts\simhei.ttf"];
+
+#[cfg(target_os = "macos")]
+const ROUNDED: &str = "/System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf";
+#[cfg(target_os = "macos")]
+const KOREAN: &[&str] = &["/System/Library/Fonts/AppleSDGothicNeo.ttc"];
+#[cfg(target_os = "macos")]
+const JAPANESE: &[&str] = &["/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc", "/System/Library/Fonts/ヒラギノ角ゴシック W4.ttc"];
+#[cfg(target_os = "macos")]
+const CHINESE: &[&str] = &["/System/Library/Fonts/Hiragino Sans GB.ttc", "/System/Library/Fonts/STHeiti Medium.ttc"];
+
+fn read_first(paths: &[&str]) -> Option<Vec<u8>> {
+    paths.iter().find_map(|p| std::fs::read(p).ok())
+}
+
 pub fn set_fonts(ctx: &egui::Context, cjk: Cjk) {
     let mut fonts = FontDefinitions::default();
-    let dir = std::path::Path::new(r"C:\Windows\Fonts");
     let mut chain = Vec::new();
     // The original's font (Arial Rounded MT Bold) isn't redistributable, so use the system copy
-    // that ships with Office/Windows when present and fall back to egui's default font.
-    if let Ok(bytes) = std::fs::read(dir.join("ARLRDBD.TTF")) {
+    // (Windows/Office, or macOS's Supplemental fonts) when present and fall back to egui's default.
+    if let Some(bytes) = read_first(&[ROUNDED]) {
         fonts.font_data.insert("rounded".into(), FontData::from_owned(bytes).into());
         chain.push("rounded".to_string());
     }
-    let wanted: [(bool, &[&str]); 3] = [
-        (cjk.korean, &["malgunbd.ttf", "malgun.ttf"]),
-        (cjk.japanese, &["YuGothB.ttc", "meiryob.ttc", "msgothic.ttc"]),
-        (cjk.chinese, &["msyhbd.ttc", "msyh.ttc", "simhei.ttf"]),
-    ];
+    let wanted: [(bool, &[&str]); 3] = [(cjk.korean, KOREAN), (cjk.japanese, JAPANESE), (cjk.chinese, CHINESE)];
     for (on, files) in wanted {
         if !on {
             continue;
         }
-        if let Some(bytes) = files.iter().find_map(|f| std::fs::read(dir.join(f)).ok()) {
+        if let Some(bytes) = read_first(files) {
             let name = format!("cjk{}", chain.len());
             fonts.font_data.insert(name.clone(), FontData::from_owned(bytes).into());
             chain.push(name);

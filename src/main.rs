@@ -3,11 +3,21 @@
 mod assets;
 mod audio;
 mod config;
+#[cfg(windows)]
+mod daemon;
+#[cfg(target_os = "macos")]
+#[path = "daemon_macos.rs"]
 mod daemon;
 mod devtools;
 mod keymap;
+#[cfg(target_os = "macos")]
+mod keytap_macos;
 mod player;
 mod editor;
+#[cfg(windows)]
+mod sys;
+#[cfg(target_os = "macos")]
+#[path = "sys_macos.rs"]
 mod sys;
 
 fn main() {

@@ -4,6 +4,10 @@
 //! Runs as its own short-lived process so the GUI toolkit never sits in the background daemon.
 //! Every change is saved to the config file and the daemon is told to reload.
 
+#[cfg(windows)]
+mod capture;
+#[cfg(target_os = "macos")]
+#[path = "capture_macos.rs"]
 mod capture;
 mod i18n;
 mod icons;
@@ -41,8 +45,8 @@ pub fn run() {
         .with_decorations(false)
         .with_taskbar(!cfg.anchor_window);
     if cfg.anchor_window {
-        if let Some((x, y)) = sys::work_area_corner() {
-            viewport = viewport.with_position([x - W - 10.0, y - H - 10.0]);
+        if let Some((x, y)) = sys::anchor_position(W, H) {
+            viewport = viewport.with_position([x, y]);
         }
     }
     if let Some((rgba, width, height)) = assets::png_rgba(assets::ICON_BIG) {
@@ -1171,8 +1175,8 @@ impl Editor {
             });
             ui.with_layout(Layout::top_down(Align::Min), |ui| {
                 if ui.checkbox(&mut ed.cfg.anchor_window, ed.tr.t("settings.anchor_window")).changed() && ed.cfg.anchor_window {
-                    if let Some((x, y)) = sys::work_area_corner() {
-                        ui.ctx().send_viewport_cmd(egui::ViewportCommand::OuterPosition(pos2(x - W - 10.0, y - H - 10.0)));
+                    if let Some((x, y)) = sys::anchor_position(W, H) {
+                        ui.ctx().send_viewport_cmd(egui::ViewportCommand::OuterPosition(pos2(x, y)));
                     }
                 }
                 if ui.checkbox(&mut ed.cfg.startup_run, ed.tr.t("settings.startup")).changed() {

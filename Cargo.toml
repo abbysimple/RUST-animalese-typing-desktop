@@ -11,14 +11,21 @@ cpal = "0.18.2"
 eframe = { version = "0.36.2", default-features = false, features = ["glow", "default_fonts"] }
 fastrand = "2.5.0"
 lewton = "0.10.2"
-mslnk = "0.1.8"
 png = "0.18.1"
 resvg = { version = "0.48.1", default-features = false }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 tray-icon = "0.26.1"
+
+[target.'cfg(windows)'.dependencies]
+mslnk = "0.1.8"
 windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_UI_Input_KeyboardAndMouse", "Win32_UI_Accessibility", "Win32_System_Threading", "Win32_System_LibraryLoader", "Win32_Security", "Win32_UI_HiDpi"] }
 winreg = "0.56.0"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6.5"
+objc2-foundation = { version = "0.3.2", features = ["NSArray", "NSString", "NSURL", "NSGeometry", "NSThread"] }
+objc2-app-kit = { version = "0.3.2", features = ["NSApplication", "NSResponder", "NSRunningApplication", "NSWorkspace", "NSScreen"] }
 
 [profile.release]
 lto = true

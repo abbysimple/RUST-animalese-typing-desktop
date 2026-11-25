@@ -90,6 +90,32 @@ The exe is at `target\release\animalese-rs.exe`. Copy it somewhere else before r
 to day, so rebuilding doesn't fight the running exe and "Run on startup" points at a stable
 path.
 
+## macOS
+
+Build the app bundle (needs Rust and the Xcode command line tools):
+
+```
+./macos/bundle.sh            # this Mac's CPU
+./macos/bundle.sh universal  # Apple Silicon + Intel in one app
+```
+
+This creates `target/release/Animalese Typing.app`. Drag it to `/Applications` and open it. It
+lives in the menu bar (no Dock icon):
+
+- The first launch asks for **Input Monitoring** (System Settings → Privacy & Security → Input
+  Monitoring). Turn on *Animalese Typing*. If sounds do not start, quit it from the menu and reopen it.
+- **Left-click** the menu-bar icon to open the editor, **right-click** for the menu.
+- Command works like Ctrl, so ⌘C, ⌘V and the rest play the same sounds as Ctrl shortcuts on Windows.
+- Settings live in `~/Library/Application Support/animalese-rs/`. "Run on startup" adds a
+  LaunchAgent at `~/Library/LaunchAgents/com.github.abbysimple.animalese-rs.plist`.
+- The app is signed ad-hoc, so after each rebuild macOS may ask for Input Monitoring again. If
+  sounds stop, remove the old entry in that settings list and add the new app.
+
+macOS-specific code: `src/keytap_macos.rs` (CGEventTap that turns Mac key codes into the Windows
+virtual-key codes the rest of the app uses), `src/daemon_macos.rs` (menu-bar app),
+`src/sys_macos.rs` (single instance, editor↔daemon socket, LaunchAgent) and
+`src/editor/capture_macos.rs`.
+
 ## How it works
 
 | File | What it does |
